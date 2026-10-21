@@ -1,0 +1,1 @@
+{ "name": "minibuild", "version": "0.1.0", "description": "/minibuild <goal>: a Sonnet orchestrator plans the goal and routes chunks to Haiku, Sonnet and Opus subagents (max 5 at once) with matching effort." }
