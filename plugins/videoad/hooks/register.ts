@@ -31,78 +31,8 @@ const REMOTION = `REMOTION TECHNICAL RULES
 
 const WORKER = `You are a worker in a /videoad run. Do exactly the job you are given and finish with a short report (files written, what to check). Be specific and decisive; no generic filler.`
 
-const AGENTS = [
-  {
-    name: 'strategist',
-    description: 'videoad STRATEGIST (Opus): turns a brief into the ad concept: audience, single big idea, hook options, script with timings, shot-by-shot storyboard, and a style system (palette, fonts, motion language).',
-    model: 'opus',
-    effort: 'high',
-    prompt: `${WORKER}\n\nYou are a world-class ad creative director. Output a concise creative document saved to the path you are given, containing: audience and one-sentence big idea; 3 hook candidates and the chosen one with why; a timed script (on-screen words per beat); a shot-by-shot storyboard with duration in frames at 30fps, the visual, the motion and the transition for each beat; and a style system (hex colours, fonts, easing, background treatment). Respect these:\n\n${CRAFT}`,
-  },
-  {
-    name: 'animator',
-    description: 'videoad ANIMATOR (Sonnet): implements Remotion scenes, components and compositions from a storyboard and style system, and renders them.',
-    model: 'sonnet',
-    effort: 'high',
-    prompt: `${WORKER}\n\nYou are an expert Remotion engineer and motion designer. Implement exactly what the storyboard and style system specify; polish the motion rather than adding scope.\n\n${REMOTION}\n\n${CRAFT}`,
-  },
-  {
-    name: 'critic',
-    description: 'videoad CRITIC (Opus): reviews rendered still frames and the code against the storyboard and ad-craft rules and returns a prioritized fix list.',
-    model: 'opus',
-    effort: 'high',
-    prompt: `${WORKER}\n\nYou are a ruthless ad reviewer. Render stills with remotion still at the key frames (hook at ~frame 10 and 30, mid beats, the CTA) in all three compositions, view them with the Read tool, and judge: scroll-stopping hook, legibility, hierarchy, safe zones, overflow or clipping in each aspect ratio, palette, motion quality, CTA clarity. Return a prioritized numbered fix list with exact file and value changes. If it is genuinely excellent, say so.\n\n${CRAFT}\n\n${REMOTION}`,
-  },
-] as const
-
-const brief = (goal: string) => `# /videoad: make a genuinely excellent video ad in Remotion
-
-You are the producer. Brief from the user:
-
-${goal}
-
-Deliverable: a Remotion project in ./videoad-<slug>/ that renders one 15-second text-and-motion-graphics ad (no photos or footage, no voiceover) in three aspect ratios from one source: Vertical 9:16, Square 1:1, Landscape 16:9, saved as MP4s in out/.
-
-## Step 1: Clarify only if essential
-If the brief lacks the product/brand name, the target audience, or the call to action, make a sensible choice and state it rather than interrogating the user. Pick a slug.
-
-## Step 2: Concept (spawn one videoad:strategist, effort high)
-Give it the full brief and the path ./videoad-<slug>/CREATIVE.md. Review the result. If the hook is not scroll-stopping, send it back once with specific notes.
-
-## Step 3: Scaffold and build (videoad:animator, effort high)
-Have one animator scaffold the project (package.json with remotion, @remotion/cli, react, @remotion/transitions, @remotion/google-fonts; tsconfig; src/index.ts; src/Root.tsx with the three Compositions) and build the shared theme and base components. Then, in parallel (never two agents editing the same file), spawn animators per scene group, each with the storyboard, the style system and its exact files. At most ${MAX_AGENTS} videoad agents run at once.
-
-## Step 4: Render check
-Render stills for the key frames and one full vertical render. Fix compile or render errors yourself or via an animator.
-
-## Step 5: Critique loop (videoad:critic, effort high), up to 2 rounds
-The critic reviews stills of all three compositions against CREATIVE.md and the craft rules. Apply its fixes (via animators) and re-check. Stop when it signs off or after 2 rounds.
-
-## Step 6: Final render and report
-Render all three MP4s into out/. Report: the concept in two sentences, the file paths, the render commands, and any known limitations. If a render could not run in this environment, say exactly that and give the commands to run locally.
-
-Use the Agent tool with subagent_type videoad:strategist, videoad:animator or videoad:critic and pass the effort parameter explicitly (the user asked for it). Workers have no memory of this chat, so put everything they need in each prompt.
-
-${CRAFT}`
 
 export const register: Register = on => {
-  on('session.start', async ($, e, next) => {
-    for (const a of AGENTS) await $.agent.register(a)
-    await $.command.register({
-      name: 'videoad',
-      description: 'Plan and build a high-end Remotion video ad (9:16, 1:1, 16:9) from a brief',
-      argumentHint: '<brief>',
-    })
-    return next(e)
-  })
-
-  on('command.run', { command: 'videoad' }, async ($, e) => {
-    const goal = String(e.args ?? '').trim()
-    if (!goal) return { text: 'Usage: /videoad <brief: product, audience, message, call to action>' }
-    void $.prompt.submit({ text: brief(goal) }).catch(() => {})
-    return { text: `videoad: planning and building an ad for "${goal}"` }
-  })
-
   on('tool.call', { tool: 'Agent' }, async ($, e, next) => {
     const tier = e.input.subagent_type ? TIERS[e.input.subagent_type] : undefined
     if (!tier) return next(e)
