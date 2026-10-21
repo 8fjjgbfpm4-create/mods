@@ -1,8 +1,23 @@
 {
   "name": "isaac-mods",
-  "owner": { "name": "8fjjgbfpm4-create" },
+  "owner": {
+    "name": "8fjjgbfpm4-create"
+  },
   "plugins": [
-    { "name": "superbuild", "source": "./plugins/superbuild", "description": "/superbuild <goal>: Opus orchestrator plans the goal and routes chunks to Haiku, Sonnet and Opus subagents (max 5 at once)." },
-    { "name": "minibuild", "source": "./plugins/minibuild", "description": "/minibuild <goal>: Sonnet orchestrator plans the goal and routes chunks to Haiku, Sonnet and Opus subagents (max 5 at once)." }
+    {
+      "name": "superbuild",
+      "source": "./plugins/superbuild",
+      "description": "/superbuild <goal>: Opus orchestrator plans the goal and routes chunks to Haiku, Sonnet and Opus subagents (max 5 at once)."
+    },
+    {
+      "name": "minibuild",
+      "source": "./plugins/minibuild",
+      "description": "/minibuild <goal>: Sonnet orchestrator plans the goal and routes chunks to Haiku, Sonnet and Opus subagents (max 5 at once)."
+    },
+    {
+      "name": "videoad",
+      "source": "./plugins/videoad",
+      "description": "/videoad <brief>: plans a high-end motion-graphics ad and builds it in Remotion, rendered in 9:16, 1:1 and 16:9 from one source."
+    }
   ]
 }
