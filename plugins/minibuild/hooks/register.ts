@@ -76,7 +76,7 @@ export const register: Register = on => {
   on('command.run', { command: 'minibuild' }, async ($, e) => {
     const goal = String(e.args ?? '').trim()
     if (!goal) return { text: 'Usage: /minibuild <goal>' }
-    await $.prompt.submit({ text: orchestratorBrief(goal) })
+    void $.prompt.submit({ text: orchestratorBrief(goal) }).catch(() => {})
     return { text: `minibuild: orchestrator planning "${goal}" (max ${MAX_AGENTS} agents at once)` }
   })
 
