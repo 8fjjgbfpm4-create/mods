@@ -1,5 +1,5 @@
 {
-  "name": "mods",
+  "name": "isaac-mods",
   "owner": { "name": "8fjjgbfpm4-create" },
   "plugins": [
     { "name": "superbuild", "source": "./plugins/superbuild", "description": "/superbuild <goal>: Opus orchestrator plans the goal and routes chunks to Haiku, Sonnet and Opus subagents (max 5 at once)." },

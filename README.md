@@ -1,4 +1,4 @@
-# mods
+# isaac-mods
 
 Claude Code mods.
 
@@ -9,6 +9,6 @@ Claude Code mods.
 
 ```
 /plugin marketplace add 8fjjgbfpm4-create/mods
-/plugin install superbuild@mods
-/plugin install minibuild@mods
+/plugin install superbuild@isaac-mods
+/plugin install minibuild@isaac-mods
 ```
